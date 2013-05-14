@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<project name="schedulegwas" default="jar" basedir=".">
+	<echo>Running build for shedulegwas</echo>
+	<echo>Setting up build properties...</echo>
+
+	<!-- Set up build properties -->
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="dist.dir" value="${basedir}/build/dist" />
+
+	<property name="dist.lib.dir" value="${basedir}/build/dist/lib" />
+
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="jarFile" value="${basedir}/schedulegwas.jar" />
+	<property name="bin.dir" value="${basedir}/bin" />
+
+	<property file="${build.dir}/build.version" />
+	<property file="${build.dir}/build.number" />
+
+	<property environment="env" />
+	<property name="build.id" value="${env.USER}" />
+
+	<tstamp />
+	<property name="version.date" value="${TSTAMP}-${DSTAMP}" />
+
+	<!-- Create jar from compiled sources  -->
+	<target name="jar" depends="clean">
+		<echo>Creating jar...</echo>
+		<echo>jar version: ${version.major}.${version.minor}_${build.number}_${build.id}_${version.date}</echo>
+		<path id="dist.classpath">
+			<fileset dir="${lib.dir}" includes="**/*.jar, **/*.zip" />
+		</path>
+		<manifestclasspath property="dist.manifest.classpath" jarfile="${jarFile}">
+			<classpath refid="dist.classpath" />
+		</manifestclasspath>
+
+		<jar destfile="${jarFile}" compress="true">
+			<fileset dir="${bin.dir}" includes="**/*.*" />
+			<manifest>
+				<attribute name="Main-Class" value="nl.vu.psy.gwas.ScheduleGwas" />
+				<attribute name="Implementation-Version" value="${version.major}.${version.minor}.${build.number}-${build.id}-${version.date}" />
+				<attribute name="Class-Path" value="${dist.manifest.classpath}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- Create a build -->
+	<target name="build" depends="jar">
+		<echo>Building: schedulegwas.jar - ${version.major}.${version.minor}.${build.number}-${version.date}</echo>
+		<buildnumber file="${build.dir}/build.number" />
+		<copy file="${jarFile}" todir="${dist.dir}" />
+		<copy file="scripts/schedulegwas.sh" todir="${dist.dir}" />
+		<copy file="schedulegwas.properties" todir="${dist.dir}" />
+		<copy file="plink.user.options" todir="${dist.dir}" />
+		<copy file="snptest.user.options" todir="${dist.dir}" />
+		<!-- Copy lib to dist dir -->
+		<copy todir="${dist.lib.dir}">
+			<fileset dir="${lib.dir}" />
+		</copy>
+		<!-- Make single zip -->
+		<zip destfile="${dist.dir}/schedulegwas_${version.major}.${version.minor}.${build.number}-${version.date}.zip"
+		      basedir="${dist.dir}"
+			  />
+	</target>
+
+	<!-- Clean build directories -->
+	<target name="clean">
+		<echo>Cleaning build directories...</echo>
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" includes="**/*" />
+		</delete>
+		<delete file="${jarFile}" />
+	</target>
+
+</project>

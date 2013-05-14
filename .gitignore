@@ -1,3 +1,6 @@
+.metadata/*
+version.ini
+
 *.class
 
 # Package Files #
