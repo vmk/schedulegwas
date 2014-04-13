@@ -333,12 +333,6 @@ public class ScheduleGwas {
 					// Copy in user files
 					s = new Step("copyin_sample");
 					CopyInMongoFile cm = new CopyInMongoFile();
-					cm.setHostname(getProperty(PropertyKeys.JHOST));
-					cm.setPort(Integer.parseInt(getProperty(PropertyKeys.JPORT)));
-					cm.setDbName(getProperty(PropertyKeys.JDBNAME));
-					if (Boolean.parseBoolean(getProperty(PropertyKeys.JAUTH))) {
-						cm.setAuthCredentials(getProperty(PropertyKeys.JUSER), getProperty(PropertyKeys.JPASS));
-					}
 					cm.setFileName(sampleFileName);
 
 					s.add(cm);
@@ -349,12 +343,6 @@ public class ScheduleGwas {
 						s = new Step("copyin_covar");
 						String covarFileName = "[GWAS]_[" + projectid + "]" + "_[" + getProperty(PropertyKeys.CLIENTID) + "]_[" + covarFile.getName() + "]";
 						cm = new CopyInMongoFile();
-						cm.setHostname(getProperty(PropertyKeys.JHOST));
-						cm.setPort(Integer.parseInt(getProperty(PropertyKeys.JPORT)));
-						cm.setDbName(getProperty(PropertyKeys.JDBNAME));
-						if (Boolean.parseBoolean(getProperty(PropertyKeys.JAUTH))) {
-							cm.setAuthCredentials(getProperty(PropertyKeys.JUSER), getProperty(PropertyKeys.JPASS));
-						}
 						cm.setFileName(covarFileName);
 
 						s.add(cm);
@@ -395,7 +383,7 @@ public class ScheduleGwas {
 					} else if (plink) {
 						if (covarFile != null && covarFile.exists()) {
 							String covarFileName = "[GWAS]_[" + projectid + "]" + "_[" + getProperty(PropertyKeys.CLIENTID) + "]_[" + covarFile.getName() + "]";
-							String covarFileNamePlink = covarFileName.replaceAll("[", "\\\\[");
+							String covarFileNamePlink = covarFileName.replaceAll("\\[", "\\\\[");
 							String sampleFileNamePlink = sampleFileName.replaceAll("\\[", "\\\\[");
 							if (useLog) {
 								// Run plink
@@ -467,12 +455,6 @@ public class ScheduleGwas {
 					// Copy output to mongo
 					s = new Step("copyout_zip");
 					CopyOutMongoFile cmo = new CopyOutMongoFile();
-					cmo.setHostname(getProperty(PropertyKeys.JHOST));
-					cmo.setPort(Integer.parseInt(getProperty(PropertyKeys.JPORT)));
-					cmo.setDbName(getProperty(PropertyKeys.JDBNAME));
-					if (Boolean.parseBoolean(getProperty(PropertyKeys.JAUTH))) {
-						cmo.setAuthCredentials(getProperty(PropertyKeys.JUSER), getProperty(PropertyKeys.JPASS));
-					}
 					cmo.setFileName(recipeId + ".tar.gz");
 
 					s.add(cmo);
